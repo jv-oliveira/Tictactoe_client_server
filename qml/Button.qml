@@ -37,23 +37,45 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 import QtQuick 2.13
 
-Item {
+Rectangle {
+    id: container
+
+    property string text
+    property bool pressed: false
+
     signal clicked
+    signal released
 
-    states: [
-        State { name: "X"; PropertyChanges { target: image; source: applicationDirPath + "/images/x.png" } },
-        State { name: "O"; PropertyChanges { target: image; source: applicationDirPath + "/images/o.png" } }
-    ]
+    width: buttonLabel.width + 20; height: buttonLabel.height + 6
+    border { width: 1; color: Qt.darker(container.color) }
+    radius: 8
+    color: "lightgray"
+    smooth: true
 
-    Image {
-        id: image
-        anchors.centerIn: parent
+    gradient: Gradient {
+        GradientStop {
+            position: 0.0
+            color: container.pressed ? "darkgray" : "white"
+        }
+        GradientStop {
+            position: 1.0
+            color: container.color
+        }
     }
 
     MouseArea {
         anchors.fill: parent
-        onClicked: parent.clicked()
+        onReleased: container.released()
+        onPressed: container.clicked()
+    }
+
+    Text {
+        id: buttonLabel
+        anchors.centerIn: container
+        text: container.text
+        font.pixelSize: 14
     }
 }

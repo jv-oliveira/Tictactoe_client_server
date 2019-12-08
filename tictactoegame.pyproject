@@ -1,0 +1,3 @@
+{
+    "files": ["qml/Button.qml","qml/ServerForm.ui.qml","tictactoegame.py","player.py","qml/PlayerListForm.ui.qml","qml/tictactoe.js","images/o.png","qml/TicTacToe.qml","images/x.png","local_game_manager.py","PlayerListModel.py","qml/app.qml","qml/player_list.qml","qml/OXBox.qml","images/board.png"]
+}
