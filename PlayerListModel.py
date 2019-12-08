@@ -1,6 +1,5 @@
 # This Python file uses the following encoding: utf-8
 from PyQt5.QtCore import QAbstractListModel, Qt, pyqtSignal, pyqtSlot, QModelIndex
-from PlayerStates import States
 
 class PlayerListModel(QAbstractListModel):
 
@@ -36,7 +35,7 @@ class PlayerListModel(QAbstractListModel):
     @pyqtSlot(int, str)
     def addPlayer(self, id: int, name: str):
         self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
-        self._players.append({'id': id, 'name': name, 'gamingState': GamingStates.AVAILABLE})
+        self._players.append({'id': id, 'name': name, 'gamingState': 0})
         self.endInsertRows()
 
     @pyqtSlot(int, int, str, int)

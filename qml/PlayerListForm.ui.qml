@@ -42,10 +42,9 @@ Item {
 
                 Text {
                     text: {
-                        console.log("id: " + id + " state: " + gamingState)
-                        if (gamingState === 0)
+                        if (gamingState == 0)
                             return "Disponível"
-                        else if (gamingState === 1)
+                        else if (gamingState == 1)
                             return "Jogando"
                         else
                             return "Ocupado"
