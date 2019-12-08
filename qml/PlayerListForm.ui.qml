@@ -14,7 +14,10 @@ Item {
         model: PlayerListModel
 
         anchors.fill: parent
-        highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
+        highlight: Rectangle {
+            color: "lightsteelblue"
+            radius: 5
+        }
         focus: true
 
         delegate: Item {
@@ -36,14 +39,28 @@ Item {
                     font.bold: true
                     anchors.verticalCenter: parent.verticalCenter
                 }
+
+                Text {
+                    text: {
+                        console.log("id: " + id + " state: " + gamingState)
+                        if (gamingState === 0)
+                            return "Disponível"
+                        else if (gamingState === 1)
+                            return "Jogando"
+                        else
+                            return "Ocupado"
+                    }
+
+                    anchors.verticalCenter: parent.verticalCenter
+                }
             }
 
             MouseArea {
-                  id: mouse_area1
-                  z: 1
-                  hoverEnabled: false
-                  anchors.fill: parent
-                  onClicked: listView.currentIndex = index
+                id: mouse_area1
+                z: 1
+                hoverEnabled: false
+                anchors.fill: parent
+                onClicked: listView.currentIndex = index
             }
         }
     }
