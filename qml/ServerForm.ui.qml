@@ -1,18 +1,20 @@
 import QtQuick 2.4
+import QtQml 2.13
+import Tictactoe 1.0
 
 import "../qml"
 
 Item {
     id: container
-    width: 350
+    width: 500
     height: 500
 
-    signal serverConnect
+    signal tryConnection(string address, int port)
 
     Text {
         id: textEdit
-        x: 50
-        y: 46
+        x: 100
+        y: 50
         width: 300
         height: 50
         text: qsTr("Conecte ao servidor!")
@@ -21,7 +23,7 @@ Item {
 
     Text {
         id: textEdit1
-        x: 50
+        x: 100
         y: 145
         width: 300
         height: 24
@@ -31,8 +33,8 @@ Item {
 
     Rectangle {
         id: rectangle
-        x: 50
-        y: 183
+        x: 100
+        y: 200
         width: 235
         height: 54
         color: "#00000000"
@@ -55,12 +57,13 @@ Item {
             inputMask: "000.000.000.000;_"
             passwordCharacter: "\u2022"
             font.pixelSize: 24
+            KeyNavigation.tab: one
         }
     }
 
     Text {
         id: textEdit2
-        x: 50
+        x: 100
         y: 270
         width: 300
         height: 24
@@ -70,7 +73,7 @@ Item {
 
     Rectangle {
         id: rectangle1
-        x: 50
+        x: 100
         y: 300
         width: 235
         height: 54
@@ -93,6 +96,7 @@ Item {
             anchors.topMargin: -19
             inputMask: "00000;_"
             font.pixelSize: 24
+            KeyNavigation.tab: two
         }
     }
 
@@ -102,8 +106,13 @@ Item {
         anchors.top: rectangle1.bottom
         anchors.topMargin: 20
         anchors.left: parent.left
-        anchors.leftMargin: 50
+        anchors.leftMargin: 100
         onClicked: connectButton.pressed = true
-        onReleased: { container.serverConnect(); connectButton.pressed = false;}
+        KeyNavigation.tab: three
+        onReleased: {
+            connectButton.pressed = false
+            container.tryConnection(textInput.text.toString(),
+                                    parseInt(textInput2.text.toString()))
+        }
     }
 }

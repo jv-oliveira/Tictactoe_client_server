@@ -1,6 +1,7 @@
 # This Python file uses the following encoding: utf-8
 from PyQt5.QtCore import QAbstractListModel, Qt, pyqtSignal, pyqtSlot, QModelIndex
 
+
 class PlayerListModel(QAbstractListModel):
 
     IDRole = Qt.UserRole + 1
@@ -31,6 +32,15 @@ class PlayerListModel(QAbstractListModel):
             PlayerListModel.NameRole: b'name',
             PlayerListModel.GamingStateRole: b'gamingState'
         }
+
+    def update_players(self, players):
+        self.beginRemoveColumns(QModelIndex(), 0, len(self._players)-1)
+        self._players = []
+        self.endRemoveRows()
+        self.beginInsertRows(QModelIndex(), 0, len(players)-1)
+        self._players = players
+        self.endInsertRows()
+        self.playerChanged.emit()
 
     @pyqtSlot(int, str)
     def addPlayer(self, id: int, name: str):

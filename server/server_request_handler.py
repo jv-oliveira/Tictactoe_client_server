@@ -12,15 +12,16 @@ class ServerRequestHandler(server.BaseHTTPRequestHandler):
     AUTH_STR = "Authorization"
 
     def __init__(self, request, client_address, s: server.ThreadingHTTPServer):
-        #self._session_manager = s.sm
-        #elf._game_session_manager = s.gsm
-        self._session_manager = SessionManager(s.sm)
-        self._game_session_manager = GameSessionManager(s.gsm)
+        self._session_manager = s.sm
+        self._game_session_manager = s.gsm
+        # self._session_manager = SessionManager(s.sm)
+        # self._game_session_manager = GameSessionManager(s.gsm)
         self._POST_map = {
             "/login": self.do_login,
             "/requestGame": self.do_request_game,
             "/invitation": self.do_invitation,
             "/gameSessionActive": self.do_game_session_active,
+            "/quit": self.do_quit,
             "/makeMove": self.do_make_move
         }
         self._GET_map = {
@@ -43,6 +44,7 @@ class ServerRequestHandler(server.BaseHTTPRequestHandler):
 
     def valid_headers(self):
         if not self._session_manager.check(self.get_auth_header()):
+            print('Unauthorized')
             self.send_error(server.HTTPStatus.UNAUTHORIZED)
         elif self.get_type_header() != self.APP_JSON_STR:
             self.send_error(server.HTTPStatus.BAD_REQUEST, self.CONTENT_TYPE_STR + ' is not ' + self.APP_JSON_STR)
@@ -115,7 +117,7 @@ class ServerRequestHandler(server.BaseHTTPRequestHandler):
         player = self._game_session_manager.get_player(int(move_data['player_id']))
         index = int(move_data['index_id'])
         if gs is None:
-            self.send_success_response(server.HTTPStatus.NO_CONTENT)
+            self.send_error(server.HTTPStatus.NO_CONTENT)
         elif not gs.make_move(player, index):
             self.send_error(server.HTTPStatus.EXPECTATION_FAILED, "Tried to make illegal move!")
         else:
@@ -150,7 +152,7 @@ class ServerRequestHandler(server.BaseHTTPRequestHandler):
         req_data = self.get_json_response()
         gs = self._game_session_manager.get_player_session(int(req_data['player_id']))
         if gs is None:
-            self.send_success_response(server.HTTPStatus.NO_CONTENT)
+            self.send_error(server.HTTPStatus.NO_CONTENT)
         elif self.command == "GET":
             winner = gs.winner()
             self.send_success_response({
@@ -162,8 +164,9 @@ class ServerRequestHandler(server.BaseHTTPRequestHandler):
                 }
             })
         else:
-            if bool(req_data['get_out']):
+            if bool(req_data['quit']):
                 self._game_session_manager.delete_session(gs.id)
+                self.send_success_response({})
             else:
                 self.send_error(server.HTTPStatus.BAD_REQUEST)
 
@@ -215,3 +218,15 @@ class ServerRequestHandler(server.BaseHTTPRequestHandler):
                         'session_choices': gs.choices
                     }
                 })
+            else:
+                self.send_error(server.HTTPStatus.NO_CONTENT)
+
+    def do_quit(self):
+        req_data = self.get_json_response()
+        player_id = int(req_data['player_id'])
+        gs = self._game_session_manager.get_player_session(player_id)
+        self._game_session_manager.delete_invitation(player_id)
+        if gs is not None:
+            self._game_session_manager.delete_session(gs.id)
+        self._game_session_manager.delete_player(player_id)
+        self.send_success_response({})

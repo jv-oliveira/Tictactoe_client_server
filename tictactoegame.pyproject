@@ -1,3 +1,3 @@
 {
-    "files": ["qml/Button.qml","qml/ServerForm.ui.qml","tictactoegame.py","player.py","qml/PlayerListForm.ui.qml","qml/tictactoe.js","images/o.png","qml/TicTacToe.qml","images/x.png","local_game_manager.py","PlayerListModel.py","qml/app.qml","qml/player_list.qml","qml/OXBox.qml","images/board.png"]
+    "files": ["qml/app.qml","qml/EsperandoJogadorForm.ui.qml","qml/PlayerNameForm.ui.qml","qml/ServerForm.ui.qml","local_game_manager.py","qml/Button.qml","images/o.png","qml/PlayerListForm.ui.qml","images/x.png","qml/CarregandoListaForm.ui.qml","PlayerListModel.py","images/board.png","player.py","qml/OXBox.qml","qml/AcceptInviteForm.ui.qml","qml/PlayerName.qml","qml/TicTacToe.qml","tictactoegame.py","qml/PlayerList.qml","qml/tictactoe.js"]
 }

@@ -51,11 +51,22 @@ Rectangle {
     property bool running: true
     property int playerIndex: 0
 
-    width: display.width; height: display.height + textMsg.height
+    width: display.width; height: display.height + 10
 
     Text {
         id: textMsg
-        text: "Vez do Jogador " + (game.playerIndex+1)
+        text: {
+            if (gameManager.winner !== undefined && gameManager.winner !== "") {
+                return gameManager.winner + " venceu!";
+            } else if (!gameManager.board_str.includes(' ')) {
+                return "Empate!";
+            } else if (gameManager.turn == gameManager.player_id) {
+                return "Sua vez";
+            } else {
+                return "Vez do adversário";
+            }
+        }
+
         font.family: "Helvetica"
         font.pointSize: 24
         anchors.top: parent.top
@@ -81,87 +92,19 @@ Rectangle {
                 OXBox {
                     width: board.width/3
                     height: board.height/3
-                    state: ""
+                    state: gameManager.board_str[index]
 
                     onClicked: {
-                        if (game.running && game.canPlayAtPos(index)) {
-                            if (game.playerIndex == 0) {
-                                game.makeMove(index, "X");
-                                game.playerIndex = 1;
-                            } else {
-                                game.makeMove(index, "O");
-                                game.playerIndex = 0;
+                        if (gameManager.winner === undefined || gameManager.winner === "") {
+                            if (gameManager.turn == gameManager.player_id) {
+                                console.log(gameManager.board_str[index]);
+                                console.log(gameManager.board_str);
+                                gameManager.makeMove(index);
                             }
                         }
                     }
                 }
             }
         }
-    }
-
-    function is_filled(board) {
-        for (var i = 0; i < 9; ++i)
-            if (board.children[i].state == "")
-                return false;
-        return true;
-    }
-
-    function winner(board)
-    {
-        for (var i=0; i<3; ++i) {
-            if (board.children[i].state != ""
-                    && board.children[i].state == board.children[i+3].state
-                    && board.children[i].state == board.children[i+6].state)
-                return true;
-
-            if (board.children[i*3].state != ""
-                    && board.children[i*3].state == board.children[i*3+1].state
-                    && board.children[i*3].state == board.children[i*3+2].state)
-                return true;
-        }
-
-        if (board.children[0].state != ""
-                && board.children[0].state == board.children[4].state != ""
-                && board.children[0].state == board.children[8].state != "")
-            return true;
-
-        if (board.children[2].state != ""
-                && board.children[2].state == board.children[4].state != ""
-                && board.children[2].state == board.children[6].state != "")
-            return true;
-
-        return false;
-    }
-
-    function restartGame()
-    {
-        game.running = true;
-
-        for (var i=0; i<9; ++i)
-            board.children[i].state = "";
-    }
-
-    function makeMove(pos, player)
-    {
-        board.children[pos].state = player;
-        if (winner(board)) {
-            gameFinished(player + " venceu");
-            return true;
-        } else {
-            if (is_filled(board))
-                gameFinished("Empate!");
-            return false;
-        }
-    }
-
-    function gameFinished(message)
-    {
-        textMsg.text = message;
-        game.running = false;
-    }
-
-    function canPlayAtPos(pos)
-    {
-        return board.children[pos].state == "";
     }
 }

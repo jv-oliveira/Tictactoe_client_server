@@ -1,8 +1,12 @@
 import QtQuick 2.4
+import Tictactoe 1.0
 
 Item {
+    id: container
     width: 400
     height: 400
+
+    property int selectedPlayer: 1
 
     ListView {
         id: listView
@@ -59,7 +63,10 @@ Item {
                 z: 1
                 hoverEnabled: false
                 anchors.fill: parent
-                onClicked: listView.currentIndex = index
+                onClicked: {
+                    listView.currentIndex = index
+                    container.selectedPlayer = id
+                }
             }
         }
     }

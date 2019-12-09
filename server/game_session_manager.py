@@ -107,7 +107,7 @@ class GameSessionManager:
         if player_id in self._invitations:
             invite = self._invitations[player_id]
         self._invitations_mu.release()
-        return invite['invitor']
+        return invite['invitor'] if invite is not None else None
 
     def delete_invitation(self, player_id):
         self._invitations_mu.acquire(blocking=True)
