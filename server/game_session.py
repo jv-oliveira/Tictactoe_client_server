@@ -1,4 +1,4 @@
-from player import Player
+from server.player import Player
 from threading import Lock
 
 
@@ -28,6 +28,9 @@ class GameSession:
             return self._PlayerTurn.id
         else:
             return None
+
+    def is_player_on_session(self, player_id):
+        return player_id == self._playerX.id or player_id == self._playerO.id
 
     def make_move(self, player: Player, index: int):
         self._mu.acquire(blocking=True)
@@ -65,7 +68,7 @@ class GameSession:
         else:
             return None
 
-    def winner(self):
+    def winner(self) -> Player:
         for i in range(3):
             if self._choices[i] is not None:
                 if self._choices[i] == self._choices[i+3] and self._choices[i] == self._choices[i+6]:

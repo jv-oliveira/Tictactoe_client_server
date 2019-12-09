@@ -4,22 +4,31 @@ from server.game_session_manager import GameSessionManager
 import getopt
 import sys
 import http.server
+from timeloop import Timeloop
+from datetime import timedelta
 
 HOST = None
 PORT = None
+
+tl = Timeloop()
 
 
 def usage():
     print("python3 tictactoe_server.py [-h host -p port]")
 
-def main():
 
+def main():
     parse_arguments()
     handler = ServerRequestHandler
-    with  http.server.ThreadingHTTPServer((HOST, PORT), handler) as httpd:
+    with http.server.ThreadingHTTPServer((HOST, PORT), handler) as httpd:
         print("serving at port", PORT)
         httpd.gsm = GameSessionManager()
         httpd.sm = SessionManager()
+
+        @tl.job(interval=timedelta(seconds=30))
+        def delete_old_invites():
+            httpd.gsm.remove_old_invites()
+
         httpd.serve_forever()
 
 
