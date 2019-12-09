@@ -231,7 +231,10 @@ class LocalGameManager(QObject):
     @pyqtSlot()
     def update_players_list(self):
         players = self._server_comm.get_players()
-        print(players)
+        for i in range(len(players)):
+            if players[i]['id'] == self._player_id:
+                del players[i]
+                break
         self._player_list_model.update_players(players)
         self.playerListReady.emit()
         self.playerListModelChanged.emit()

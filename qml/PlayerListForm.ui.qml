@@ -6,7 +6,11 @@ Item {
     width: 400
     height: 400
 
-    property int selectedPlayer: 1
+    property int selectedPlayer
+
+    Component.onCompleted: {
+        container.selectedPlayer = listView.currentItem.activeFocus
+    }
 
     ListView {
         id: listView

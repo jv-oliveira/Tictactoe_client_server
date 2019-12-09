@@ -21,7 +21,7 @@ def main():
     parse_arguments()
     handler = ServerRequestHandler
     with http.server.ThreadingHTTPServer((HOST, PORT), handler) as httpd:
-        print("serving at port", PORT)
+        print("serving at {}:{}".format(HOST, PORT))
         httpd.gsm = GameSessionManager()
         httpd.sm = SessionManager()
 
@@ -34,11 +34,9 @@ def main():
 
 def parse_arguments():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], ":hf:p:o")
+        opts, args = getopt.getopt(sys.argv[1:], "h:p:")
     except getopt.GetoptError as err:
         # print help information and exit:
-        print
-        str(err)  # will print something like "option -a not recognized"
         usage()
         sys.exit(2)
 

@@ -1,6 +1,7 @@
 import http.client
 from http.server import HTTPStatus
 import json
+import netaddr
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtProperty, pyqtSlot
 
 
@@ -19,18 +20,19 @@ class ServerComm(QObject):
 
     @pyqtSlot(str, int)
     def connect_to_server(self, host: str, port: int):
-        print("Trying to connect to server {}:{}".format(host, port))
-        self._server_conn = http.client.HTTPConnection(host, port, timeout=10)
-        # if self._server_conn.sock is None:
-        #     print('Not Connected!')
-        # else:
-        #     print('Connected!')
+        addr = netaddr.IPAddress(host, flags=netaddr.ZEROFILL).ipv4()
+        print("Trying to connect to server {}:{}".format(addr, port))
+        self._server_conn = http.client.HTTPConnection(str(addr), port, timeout=10)
+        self._server_conn.connect()
+        if self._server_conn.sock is None:
+            print('Not Connected!')
+        else:
+            print('Connected!')
         self.serverConnectionChanged.emit()
 
     @pyqtProperty('bool')
     def active_conn(self) -> bool:
-        return True
-        # return self._server_conn.sock is not None
+        return self._server_conn.sock is not None
 
     def _get_default_header(self, content_length: int):
         return {self.CONTENT_TYPE_STR: self.APP_JSON_STR,
