@@ -49,7 +49,7 @@ class ServerComm(QObject):
         response = self._server_conn.getresponse()
         response_bytes = response.read()
         # print(b"BYTES: " + response_bytes)
-        response_json = None if self.empty_response(response_bytes) else json.loads(response_bytes.decode())
+        response_json = None if response.code != HTTPStatus.OK or self.empty_response(response_bytes) else json.loads(response_bytes.decode())
         return response.code, response_json
 
     def get_new_login(self, name: str) -> int:
@@ -112,9 +112,9 @@ class ServerComm(QObject):
             "quit": True
         })
         if code != HTTPStatus.OK or response is None:
-            return None
+            return False
         else:
-            return response["session"]
+            return True
 
     def check_session_status(self, session_id: int) -> dict:
         code, response = self._request_and_response('GET', '/gameSessionStatus', {

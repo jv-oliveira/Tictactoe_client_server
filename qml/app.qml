@@ -134,6 +134,10 @@ ApplicationWindow {
             ticTacToeGame.visible = false
             checkInvitesTimer.running = true
             checkInvitesTimer.restart()
+            checkGameTimer.running = false
+            checkGameTimer.stop()
+            checkGameStatusTimer.running = false
+            checkGameStatusTimer.stop()
             gameManager.playerRefresh()
             playersList.visible = true
         }

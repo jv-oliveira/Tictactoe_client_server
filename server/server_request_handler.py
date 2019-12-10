@@ -63,17 +63,17 @@ class ServerRequestHandler(server.BaseHTTPRequestHandler):
         self.wfile.write(message.encode())
 
     def do_GET(self):
-        # try:
+        try:
             print("GET from addr: {} port: {}".format(self.client_address[0], int(self.client_address[1])))
             if self.path not in self._GET_map:
                 self.send_error(server.HTTPStatus.NOT_FOUND)
             elif self.valid_headers():
                     self._GET_map[self.path]()
-        # except:
-        #     self.send_error(server.HTTPStatus.INTERNAL_SERVER_ERROR)
+        except:
+            self.send_error(server.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     def do_POST(self):
-        # try:
+        try:
             print("POST from addr: {} port: {}".format(self.client_address[0], int(self.client_address[1])))
             if self.path not in self._POST_map:
                 self.send_error(server.HTTPStatus.NOT_FOUND, "Function not found")
@@ -82,8 +82,8 @@ class ServerRequestHandler(server.BaseHTTPRequestHandler):
                 self.do_login()
             elif self.valid_headers():
                 self._POST_map[self.path]()
-        # except:
-        #     self.send_error(server.HTTPStatus.INTERNAL_SERVER_ERROR)
+        except:
+            self.send_error(server.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     def do_login(self):
         session = self.get_auth_header()
@@ -118,7 +118,7 @@ class ServerRequestHandler(server.BaseHTTPRequestHandler):
         index = int(move_data['index_id'])
         if gs is None:
             self.send_error(server.HTTPStatus.NO_CONTENT)
-        elif not gs.make_move(player, index):
+        elif gs.winner() is not None or not gs.make_move(player, index):
             self.send_error(server.HTTPStatus.EXPECTATION_FAILED, "Tried to make illegal move!")
         else:
             player.address = self.client_address
@@ -220,6 +220,7 @@ class ServerRequestHandler(server.BaseHTTPRequestHandler):
                 })
             else:
                 self.send_error(server.HTTPStatus.NO_CONTENT)
+            self._game_session_manager.delete_invitation(player_id)
 
     def do_quit(self):
         req_data = self.get_json_response()

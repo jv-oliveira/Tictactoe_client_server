@@ -107,4 +107,14 @@ Rectangle {
             }
         }
     }
+
+    Button {
+        id: backButton
+        text: "Voltar"
+        anchors.right: boardImage.right
+        anchors.top: boardImage.bottom
+        anchors.margins: 20
+        onClicked: backButton.pressed = true
+        onReleased: { gameManager.gameFinished(); backButton.pressed = false;}
+    }
 }

@@ -58,6 +58,7 @@ class LocalGameManager(QObject):
         self.checkGameStatus.connect(self.check_game_status)
         self.checkActiveGame.connect(self.check_active_game)
         self.makeMove.connect(self.make_move)
+        self.gameFinished.connect(self.finish_game)
 
 
     @pyqtProperty(str)
@@ -111,6 +112,10 @@ class LocalGameManager(QObject):
     def board_str(self):
         return self._board_str
 
+    @pyqtProperty(str, notify=winnerChanged)
+    def winner(self):
+        return self._winner
+
     @staticmethod
     def board_to_str(board):
         ret = ""
@@ -147,7 +152,7 @@ class LocalGameManager(QObject):
         if accept and session is not None:
             self.clear_for_new_game()
             self._session_id = session['session_id']
-            self._winner = session['winner']
+            self.update_winner(session['winner'])
             self._turn = session['turn']
             self.update_board(session['session_choices'])
             self.turnChanged.emit()
@@ -199,6 +204,11 @@ class LocalGameManager(QObject):
         self.update_board(session['session_choices'])
         self.turnChanged.emit()
 
+    @pyqtSlot()
+    def finish_game(self):
+        self._server_comm.quit_session(self._player_id)
+        self.clear_for_new_game()
+
     @property
     def board(self):
         return self._board
@@ -217,6 +227,7 @@ class LocalGameManager(QObject):
     def update_winner(self, winner: str):
         prev = self._winner
         self._winner = winner
+        print(self._winner)
         if prev != winner:
             self.winnerChanged.emit()
 

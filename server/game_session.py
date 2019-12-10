@@ -81,8 +81,6 @@ class GameSession:
             if self._choices[0] == self._choices[4] and self._choices[0] == self._choices[8]:
                 return self.choice_to_player(self._choices[0])
         if self._choices[2] is not None:
-            if self._choices[2] == self._choices[4] and self._choices[0] == self._choices[6]:
+            if self._choices[2] == self._choices[4] and self._choices[2] == self._choices[6]:
                 return self.choice_to_player(self._choices[2])
         return None
-
-
